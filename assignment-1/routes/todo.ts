@@ -3,13 +3,20 @@ import { authenticateJwt, SECRET } from "../middleware/index"
 import { Todo } from "../db"
 const router = express.Router();
 
+interface CreateTodoInterface {
+  title: string | undefined
+  description: string | undefined
+  done: boolean | undefined
+  userId: string | undefined
+}
+
 import {Request, Response, NextFunction} from "express"
 router.post('/todos', authenticateJwt, (req: Request, res: Response) => {
   const { title, description } = req.body;
-  const done = false;
-  const userId = req.headers.userId;
+  const done: boolean = false;
+  const userId: string = req.headers.userId as string;
 
-  const newTodo = new Todo({ title, description, done, userId });
+  const newTodo = new Todo<CreateTodoInterface>({ title, description, done, userId });
 
   newTodo.save()
     .then((savedTodo) => {
